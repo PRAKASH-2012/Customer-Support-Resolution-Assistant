@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApexConnect | Customer Support Resolution Assistant</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans antialiased h-screen flex flex-col overflow-hidden">
+
+    <!-- TOP GLOBAL HEADER -->
+    <header class="bg-slate-800/90 border-b border-slate-700/80 px-6 py-3 flex items-center justify-between shadow-lg z-20">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+                <i class="fa-solid fa-headset text-lg"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg text-white leading-tight flex items-center gap-2">
+                    ApexConnect <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">TRACK_ID=PS04</span>
+                </h1>
+                <p class="text-xs text-slate-400">Broadband & Mobile Support Resolution Assistant</p>
+            </div>
+        </div>
+
+        <!-- VIEW MODE SWITCHER -->
+        <div class="flex items-center bg-slate-900/80 p-1.5 rounded-xl border border-slate-700/60 shadow-inner">
+            <button id="btn-view-customer" onclick="switchView('customer')" class="px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all bg-blue-600 text-white shadow">
+                <i class="fa-solid fa-user"></i> Customer Portal View
+            </button>
+            <button id="btn-view-agent" onclick="switchView('agent')" class="px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all text-slate-400 hover:text-slate-200">
+                <i class="fa-solid fa-user-gear"></i> Agent Resolution Desk <span id="escalated-badge" class="ml-1 px-1.5 py-0.2 text-[10px] bg-amber-500/30 text-amber-300 rounded-full border border-amber-500/40">1 Esc</span>
+            </button>
+            <button id="btn-view-analytics" onclick="switchView('analytics')" class="px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all text-slate-400 hover:text-slate-200">
+                <i class="fa-solid fa-chart-line"></i> Desk Analytics
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 flex overflow-hidden relative">
+
+        <!-- ============================================================== -->
+        <!-- VIEW 1: CUSTOMER LIVE CHAT PORTAL -->
+        <!-- ============================================================== -->
+        <section id="view-customer" class="flex-1 flex flex-col bg-slate-950 max-w-5xl mx-auto my-4 rounded-2xl border border-slate-800 shadow-2xl overflow-hidden">
+            <!-- Customer Switcher Topbar -->
+            <div class="bg-slate-900/90 border-b border-slate-800 px-6 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="text-xs text-slate-400 font-medium">Demo Customer Profile:</span>
+                    <select id="customer-select" onchange="onCustomerSelectChange()" class="bg-slate-800 text-xs font-semibold text-slate-200 border border-slate-700 rounded-lg px-3 py-1.5 outline-none focus:border-blue-500">
+                        <option value="CUST-1001">Sarah Jenkins - VIP Gigabit Fiber (Active)</option>
+                        <option value="CUST-1002">Marcus Vance - Mobile 5G (Overdue $64.50)</option>
+                        <option value="CUST-1003">Elena Rostova - Business Fiber (Outage Fault)</option>
+                        <option value="CUST-1004">David Kim - Home Starter (Active)</option>
+                    </select>
+                </div>
+                <div id="cust-line-badge" class="flex items-center gap-2 text-xs px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span id="cust-line-status-text">Line Status: Online (940 Mbps)</span>
+                </div>
+            </div>
+
+            <!-- Customer Chat Messages Area -->
+            <div id="customer-chat-box" class="flex-1 overflow-y-auto p-6 space-y-4">
+                <!-- Dynamic Chat Messages rendered here via JS -->
+            </div>
+
+            <!-- Quick Action Shortcuts -->
+            <div class="px-6 py-2 bg-slate-900/50 border-t border-slate-800/80 flex items-center gap-2 overflow-x-auto text-xs">
+                <span class="text-slate-500 font-medium whitespace-nowrap">Suggested Questions:</span>
+                <button onclick="sendQuickMessage('How do I change my WiFi password?')" class="px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/60 whitespace-nowrap transition-colors">
+                    🔑 WiFi Password Change
+                </button>
+                <button onclick="sendQuickMessage('I was charged a $15 fee on my bill, please check.')" class="px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/60 whitespace-nowrap transition-colors">
+                    💵 Dispute Billing Charge
+                </button>
+                <button onclick="sendQuickMessage('My optical modem red light is flashing and internet is down!')" class="px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/60 whitespace-nowrap transition-colors">
+                    🔴 Fiber Red Light Outage
+                </button>
+                <button onclick="openDiagnosticsModal()" class="px-3 py-1 rounded-full bg-blue-900/40 hover:bg-blue-800/60 text-blue-300 border border-blue-700/60 whitespace-nowrap transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-gauge-high"></i> Run Line Test
+                </button>
+            </div>
+
+            <!-- Customer Input Form -->
+            <form id="customer-chat-form" onsubmit="handleCustomerSubmit(event)" class="p-4 bg-slate-900 border-t border-slate-800 flex items-center gap-3">
+                <input id="customer-input" type="text" placeholder="Describe your broadband or mobile issue..." class="flex-1 bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg shadow-blue-600/20 transition-all">
+                    Send <i class="fa-solid fa-paper-plane text-xs"></i>
+                </button>
+            </form>
+        </section>
+
+
+        <!-- ============================================================== -->
+        <!-- VIEW 2: AGENT RESOLUTION DESK COMMAND CENTER -->
+        <!-- ============================================================== -->
+        <section id="view-agent" class="hidden flex-1 flex overflow-hidden">
+            <!-- Sidebar: Ticket Triage Queue -->
+            <aside class="w-80 bg-slate-900 border-r border-slate-800 flex flex-col overflow-hidden">
+                <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+                    <h2 class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-blue-400"></i> Support Queue
+                    </h2>
+                    <button onclick="loadAgentTickets()" class="text-xs text-slate-400 hover:text-white transition-colors">
+                        <i class="fa-solid fa-rotate text-xs"></i>
+                    </button>
+                </div>
+
+                <!-- Status Filter Tabs -->
+                <div class="grid grid-cols-4 p-2 bg-slate-950 text-[11px] font-semibold border-b border-slate-800 text-center gap-1">
+                    <button onclick="filterQueue('all')" id="filter-all" class="py-1.5 rounded bg-slate-800 text-blue-400">All</button>
+                    <button onclick="filterQueue('routine_draft')" id="filter-routine" class="py-1.5 rounded text-slate-400 hover:bg-slate-800">Drafts</button>
+                    <button onclick="filterQueue('missing_info')" id="filter-missing" class="py-1.5 rounded text-slate-400 hover:bg-slate-800">Info</button>
+                    <button onclick="filterQueue('escalated')" id="filter-escalated" class="py-1.5 rounded text-slate-400 hover:bg-slate-800">Escalated</button>
+                </div>
+
+                <!-- Ticket Items List -->
+                <div id="ticket-list-container" class="flex-1 overflow-y-auto p-3 space-y-2">
+                    <!-- Tickets rendered via JS -->
+                </div>
+            </aside>
+
+            <!-- Center Panel: Active Ticket Workspace & Handover Center -->
+            <main class="flex-1 bg-slate-950 flex flex-col overflow-y-auto">
+                <div id="agent-workspace-empty" class="flex-1 flex flex-col items-center justify-center text-slate-500 p-8">
+                    <i class="fa-solid fa-headset text-5xl mb-4 text-slate-700"></i>
+                    <p class="text-base font-semibold text-slate-400">Select a ticket from the queue to start resolution</p>
+                    <p class="text-xs text-slate-600 mt-1">Grounded drafts, citations, and handover context cards will display here.</p>
+                </div>
+
+                <div id="agent-workspace-content" class="hidden p-6 space-y-6">
+                    <!-- Ticket Header -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-3">
+                                <h2 id="agent-ticket-subject" class="font-bold text-lg text-slate-100">Fiber Outage Inquiry</h2>
+                                <span id="agent-ticket-status-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                                    Escalated Handover
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1 flex items-center gap-4">
+                                <span><i class="fa-solid fa-ticket text-blue-400 mr-1"></i> <span id="agent-ticket-id">TCK-8803</span></span>
+                                <span><i class="fa-solid fa-user text-indigo-400 mr-1"></i> <span id="agent-ticket-customer">Elena Rostova</span></span>
+                                <span><i class="fa-solid fa-layer-group text-slate-400 mr-1"></i> <span id="agent-ticket-category">Broadband</span></span>
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="exportHandoverSummary()" id="btn-export-handover" class="hidden px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-semibold text-xs flex items-center gap-1.5 border border-amber-500/30 transition-all">
+                                <i class="fa-solid fa-download"></i> Export Handover Report
+                            </button>
+                            <button onclick="approveCurrentDraft()" id="btn-approve-draft" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-600/20 transition-all">
+                                <i class="fa-solid fa-check"></i> Approve & Send Draft
+                            </button>
+                            <button onclick="resolveCurrentTicket()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs flex items-center gap-1.5 shadow-lg transition-all">
+                                <i class="fa-solid fa-circle-check"></i> Mark Resolved
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STRUCTURED HANDOVER CONTEXT CARD (Visible when Escalated) -->
+                    <div id="handover-card-container" class="hidden bg-gradient-to-br from-amber-950/40 via-slate-900 to-slate-900 border-2 border-amber-500/40 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-amber-500 text-slate-950 text-[11px] font-bold px-4 py-1 rounded-bl-xl uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-bolt"></i> Context-Preserving Handover
+                        </div>
+
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 text-lg">
+                                <i class="fa-solid fa-handshake"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-base text-amber-200">Concise Issue Handover Summary</h3>
+                                <p class="text-xs text-amber-400/80">Customer will not repeat themselves. All previous steps & line facts established below.</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4 text-xs">
+                            <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
+                                <span class="font-bold text-slate-300 block mb-1 uppercase tracking-wide text-[10px] text-amber-400">Core Issue Summary:</span>
+                                <p id="handover-issue-text" class="text-slate-200 font-medium">Business fiber connection total outage following thunderstorm.</p>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
+                                    <span class="font-bold text-slate-300 block mb-2 uppercase tracking-wide text-[10px] text-blue-400">Established Facts:</span>
+                                    <ul id="handover-facts-list" class="space-y-1.5 text-slate-300">
+                                        <!-- Rendered via JS -->
+                                    </ul>
+                                </div>
+                                <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
+                                    <span class="font-bold text-slate-300 block mb-2 uppercase tracking-wide text-[10px] text-emerald-400">Tried Solutions & Telemetry:</span>
+                                    <ul id="handover-tried-list" class="space-y-1.5 text-slate-300">
+                                        <!-- Rendered via JS -->
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="bg-blue-950/50 p-4 rounded-xl border border-blue-800/80 flex items-start gap-3">
+                                <i class="fa-solid fa-lightbulb text-blue-400 text-lg mt-0.5"></i>
+                                <div>
+                                    <span class="font-bold text-blue-300 block text-[11px] uppercase tracking-wide">Assistant Recommended Agent Action:</span>
+                                    <p id="handover-action-text" class="text-slate-200 font-semibold mt-1">Deploy Level-2 Field Dispatch team to inspect drop cable splice box.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GROUNDED ASSISTANT DRAFT RESOLUTION BOX -->
+                    <div id="agent-draft-box" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-robot text-blue-400"></i>
+                                <h3 class="font-bold text-sm text-slate-200">Grounded Draft Resolution</h3>
+                                <span class="text-xs px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">Cited from KB</span>
+                            </div>
+                            <span id="draft-confidence" class="text-xs text-emerald-400 font-semibold flex items-center gap-1">
+                                <i class="fa-solid fa-circle-check"></i> 95% Confidence Match
+                            </span>
+                        </div>
+
+                        <textarea id="agent-draft-textarea" rows="4" class="w-full bg-slate-950 border border-slate-700 text-slate-200 text-xs rounded-xl p-3.5 outline-none focus:border-blue-500 font-sans leading-relaxed"></textarea>
+
+                        <div class="flex items-center justify-between text-xs text-slate-400">
+                            <div id="draft-citations-tags" class="flex items-center gap-2">
+                                <!-- Citations rendered via JS -->
+                            </div>
+                            <span class="italic">Agents can edit draft text before approving</span>
+                        </div>
+                    </div>
+
+                    <!-- FULL CONVERSATION LOG -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                        <h3 class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                            <i class="fa-solid fa-comments text-indigo-400"></i> Live Conversation Log
+                        </h3>
+                        <div id="agent-chat-log" class="space-y-3 max-h-80 overflow-y-auto p-3 bg-slate-950 rounded-xl border border-slate-800">
+                            <!-- Messages rendered via JS -->
+                        </div>
+
+                        <!-- Agent Custom Reply Box -->
+                        <form onsubmit="handleAgentReply(event)" class="flex items-center gap-3 pt-2">
+                            <input id="agent-reply-input" type="text" placeholder="Type a custom message or instruction to customer..." class="flex-1 bg-slate-950 border border-slate-700 text-slate-200 text-xs rounded-xl px-4 py-2.5 outline-none focus:border-blue-500">
+                            <button type="submit" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-4 py-2.5 rounded-xl border border-slate-700 transition-colors">
+                                Send Manual Reply
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Right Sidepanel: 360° Customer Record & KB Inspector -->
+            <aside class="w-80 bg-slate-900 border-l border-slate-800 flex flex-col overflow-y-auto p-4 space-y-6">
+                <!-- Customer 360 Profile -->
+                <div>
+                    <h3 class="font-bold text-xs uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-id-card text-blue-400"></i> Customer 360° Record
+                    </h3>
+                    <div id="customer-360-card" class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3 text-xs">
+                        <div>
+                            <span id="c360-name" class="font-bold text-sm text-slate-100 block">Sarah Jenkins</span>
+                            <span id="c360-tier" class="inline-block px-2 py-0.5 text-[10px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded mt-1">VIP Account</span>
+                        </div>
+
+                        <div class="border-t border-slate-800/80 pt-2 space-y-1.5 text-slate-300">
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Plan:</span>
+                                <span id="c360-plan" class="font-semibold text-right">Gigabit Ultra Fiber</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Billing Status:</span>
+                                <span id="c360-billing" class="font-semibold text-emerald-400">Paid / Current</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Hardware ID:</span>
+                                <span id="c360-hardware" class="font-mono text-slate-400">MODEM-FB-9921</span>
+                            </div>
+                        </div>
+
+                        <!-- Live Line Diagnostic Health Card -->
+                        <div class="border-t border-slate-800/80 pt-2 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] font-bold text-slate-400">Line Telemetry:</span>
+                                <button onclick="runTelemetryCheckAgent()" class="text-[10px] text-blue-400 hover:underline">Re-test</button>
+                            </div>
+                            <div id="c360-telemetry-box" class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1">
+                                <div class="flex justify-between text-[11px]">
+                                    <span class="text-slate-400">Down/Up Speed:</span>
+                                    <span id="c360-speeds" class="text-slate-200 font-mono">940 / 880 Mbps</span>
+                                </div>
+                                <div class="flex justify-between text-[11px]">
+                                    <span class="text-slate-400">Latency:</span>
+                                    <span id="c360-latency" class="text-emerald-400 font-mono">8 ms</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Knowledge Base Inspector -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-bold text-xs uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                            <i class="fa-solid fa-book-open text-indigo-400"></i> KB Support Articles
+                        </h3>
+                        <button onclick="openAddKBModal()" class="text-[11px] text-blue-400 hover:underline font-semibold">+ New</button>
+                    </div>
+                    <div class="space-y-3">
+                        <input id="kb-search-input" onkeyup="searchKBArticles()" type="text" placeholder="Search KB articles..." class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl px-3 py-2 outline-none focus:border-blue-500">
+                        
+                        <div id="kb-articles-list" class="space-y-2 max-h-60 overflow-y-auto">
+                            <!-- KB articles list rendered via JS -->
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+
+        <!-- ============================================================== -->
+        <!-- VIEW 3: DESK OPERATIONAL ANALYTICS -->
+        <!-- ============================================================== -->
+        <section id="view-analytics" class="hidden flex-1 p-8 overflow-y-auto bg-slate-950 space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                    <h2 class="font-bold text-xl text-white">Desk Operational Analytics</h2>
+                    <p class="text-xs text-slate-400">Real-time resolution desk metrics, deflection rate, and KB grounding accuracy.</p>
+                </div>
+                <button onclick="loadAnalyticsData()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-arrows-rotate"></i> Refresh Metrics
+                </button>
+            </div>
+
+            <!-- KPI Metric Cards Grid -->
+            <div class="grid grid-cols-4 gap-6">
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+                    <span class="text-xs text-slate-400 font-medium">Routine Deflection Rate</span>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <span id="metric-deflection" class="text-3xl font-extrabold text-emerald-400">75.0%</span>
+                        <span class="text-xs text-emerald-500 font-semibold">+12% vs last month</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-2">Routine queries auto-drafted & resolved</p>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+                    <span class="text-xs text-slate-400 font-medium">Avg Handover Time Saved</span>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <span id="metric-time-saved" class="text-3xl font-extrabold text-blue-400">14.5m</span>
+                        <span class="text-xs text-blue-500 font-semibold">per escalation</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-2">Zero repetition context transfer</p>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+                    <span class="text-xs text-slate-400 font-medium">Total Tickets Processed</span>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <span id="metric-total-tickets" class="text-3xl font-extrabold text-slate-100">4</span>
+                        <span class="text-xs text-slate-400">Active Queue</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-2">Broadband & Mobile cases</p>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+                    <span class="text-xs text-slate-400 font-medium">KB Grounded Citations</span>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <span id="metric-kb-hits" class="text-3xl font-extrabold text-indigo-400">100%</span>
+                        <span class="text-xs text-indigo-500 font-semibold">Cited</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-2">Every draft linked to KB article</p>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="grid grid-cols-2 gap-6">
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4">
+                    <h3 class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie text-amber-400"></i> Ticket Queue Distribution
+                    </h3>
+                    <div class="h-64 flex items-center justify-center">
+                        <canvas id="chart-queue-pie"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4">
+                    <h3 class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-emerald-400"></i> Operational Resolution Volume
+                    </h3>
+                    <div class="h-64 flex items-center justify-center">
+                        <canvas id="chart-volume-bar"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- DIAGNOSTICS MODAL -->
+    <div id="diagnostics-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-base text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-microchip text-blue-400"></i> Automated Line Telemetry Diagnostic
+                </h3>
+                <button onclick="closeDiagnosticsModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="diag-results-content" class="space-y-3 text-xs">
+                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+                    <span>Line Status:</span>
+                    <span id="diag-status" class="font-bold text-emerald-400">Online</span>
+                </div>
+                <div class="space-y-1">
+                    <div class="flex justify-between text-slate-400"><span>Latency:</span><span id="diag-ping">12 ms</span></div>
+                    <div class="flex justify-between text-slate-400"><span>Download Speed:</span><span id="diag-down">940 Mbps</span></div>
+                    <div class="flex justify-between text-slate-400"><span>Upload Speed:</span><span id="diag-up">880 Mbps</span></div>
+                    <div class="flex justify-between text-slate-400"><span>Signal Noise Ratio:</span><span id="diag-snr">32.4 dB</span></div>
+                </div>
+                <div class="p-3 bg-blue-950/40 border border-blue-800/40 rounded-xl text-blue-200">
+                    <strong>Recommendation:</strong> <span id="diag-rec">All parameters optimal.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW KB ARTICLE MODAL -->
+    <div id="kb-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-base text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-plus text-indigo-400"></i> Add Support Knowledge Base Article
+                </h3>
+                <button onclick="closeAddKBModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="handleAddKBSubmit(event)" class="space-y-3 text-xs">
+                <input id="kb-input-id" type="text" placeholder="Article ID (e.g. KB-501)" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 outline-none focus:border-blue-500">
+                <input id="kb-input-title" type="text" placeholder="Title" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 outline-none focus:border-blue-500">
+                <input id="kb-input-keywords" type="text" placeholder="Keywords (comma separated)" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 outline-none focus:border-blue-500">
+                <textarea id="kb-input-content" rows="3" placeholder="Article Content & Policy" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 outline-none focus:border-blue-500"></textarea>
+                <textarea id="kb-input-template" rows="2" placeholder="Grounded Resolution Template" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 outline-none focus:border-blue-500"></textarea>
+                <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow">Save Knowledge Article</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
