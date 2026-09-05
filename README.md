@@ -18,6 +18,15 @@ python -c "import app; app.app.run(host='127.0.0.1', port=5001, debug=False, use
 
 The health endpoint is available at `/health`.
 
+## Deploy with Render
+
+1. Open the [Render dashboard](https://dashboard.render.com/).
+2. Select **New +** and choose **Blueprint**.
+3. Connect the `PRAKASH-2012/Customer-Support-Resolution-Assistant` repository.
+4. Select the `main` branch and apply the blueprint.
+
+Render will use `render.yaml`, install the dependencies from `requirements.txt`, and start the app with Gunicorn. The SQLite database is suitable for this demo deployment; production use should move persistent data to a managed database.
+
 ## Test
 
 Run the test suite with:
